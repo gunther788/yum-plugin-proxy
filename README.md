@@ -54,14 +54,15 @@ and disable them, regardless of the other settings.
 
 ## Installation
 
-To ease the installation and configuration of this plugin, environment variables may be set to inject values into the
-configuration file:
+The configuration file at `/etc/yum/pluginconf.d/proxy.conf` can be generated as e.g. part of Kickstart before installing
+the package, so for CentOS 7 could have:
 
-The `%post` of the package contains:
 ```
-egrep -e "^proxy=" %{pluginconf} || echo "proxy=${PROXY_PLUGIN_PROXY}" >> %{pluginconf}
-egrep -e "^no_proxy=" %{pluginconf} || echo "no_proxy=${PROXY_PLUGIN_NO_PROXY}" >> %{pluginconf}
-egrep -e "^blacklistfiles=" %{pluginconf} || echo "blacklistfiles=${PROXY_PLUGIN_BLACKLISTFILES}" >> %{pluginconf}
+[main]
+enabled=1
+proxy=http://some.proxy.example.com:3128/
+no_proxy=example.com
+blacklistfiles=CentOS-Base,CentOS-CR,CentOS-Debuginfo,CentOS-fasttrack,CentOS-Media,CentOS-Sources,CentOS-Vault,CentOS-SCLo-scl,CentOS-SCLo-scl-rh,CentOS-x86_64-kernel,epel
 ```
 
 ## Environment Variables
