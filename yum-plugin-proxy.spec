@@ -53,7 +53,7 @@ install -m644 -D -p proxy.conf %{buildroot}%{pluginconf}/proxy.conf
 %config(noreplace) %ghost %{pluginconf}/proxy.conf
 
 
-%triggerin -- centos-release
+%triggerin -p /usr/bin/bash -- centos-release
 if [ -f /etc/yum/pluginconf.d/proxy.conf ]; then
     source <(grep = /etc/yum/pluginconf.d/proxy.conf | tr -d " ")
     if [ -n "${blacklistfiles}" ]; then
