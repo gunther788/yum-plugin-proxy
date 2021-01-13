@@ -7,7 +7,7 @@
 %global pluginconf %{_sysconfdir}/yum/pluginconf.d
 
 Name:           yum-plugin-proxy
-Version:        1.0.6
+Version:        1.1.0
 Release:        3%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        Dynamically set the proxy and/or enable/disable repositories
 License:        GPLv2+
@@ -26,6 +26,7 @@ Source0:        %{url}/archive/%{commit0}.tar.gz#/%{name}-%{shortcommit0}.tar.gz
 Dynamically set the proxy and/or enable/disable repositories based on various
 criteria. Processes the already enabled repositories mid-flight and updates the
 "enabled" and "proxy" parameters.
+Nukes repo files that should not be used when we have internal repositories.
 
 
 %install
@@ -52,7 +53,27 @@ install -m644 -D -p proxy.conf %{buildroot}%{pluginconf}/proxy.conf
 %config(noreplace) %ghost %{pluginconf}/proxy.conf
 
 
+%triggerin -- centos-release
+if [ -f /etc/yum/pluginconf.d/proxy.conf ]; then
+    source <(grep = /etc/yum/pluginconf.d/proxy.conf | tr -d " ")
+    if [ -n "${blacklistfiles}" ]; then
+	for base in $(echo ${blacklistfiles} | tr "," "\n"); do
+	    repo="/etc/yum.repos.d/${base}.repo"
+	    if [ -f "${repo}" ]; then
+		echo "  Removing         : ${repo}"
+		rm -f "${repo}"
+	    fi
+	done
+    fi
+fi
+
+
 %changelog
+* Wed Jan 13 2021 Frank Tropschuh <gunther@idoru.ch> - 1.1.0-3
+- beautifying the output
+- verbose output, actually remove the repo files
+- add a trigger that removes all repo files in the blacklist
+
 * Thu Jan 07 2021 Frank Tropschuh <gunther@idoru.ch> - 1.0.6-3
 - fixed erroneous self additions from dnf repo
 - including byte-compiled artefacts
