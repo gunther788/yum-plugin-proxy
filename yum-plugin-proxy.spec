@@ -8,7 +8,7 @@
 
 Name:           yum-plugin-proxy
 Version:        1.1.0
-Release:        3%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Release:        4%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        Dynamically set the proxy and/or enable/disable repositories
 License:        GPLv2+
 URL:            https://github.com/gunther788/yum-plugin-proxy
@@ -53,7 +53,7 @@ install -m644 -D -p proxy.conf %{buildroot}%{pluginconf}/proxy.conf
 %config(noreplace) %ghost %{pluginconf}/proxy.conf
 
 
-%triggerin -p /usr/bin/bash -- centos-release
+%triggerin -p /usr/bin/bash -- centos-release teams teams-insiders google-chrome-stable google-chrome-beta google-chrome-unstable
 if [ -f /etc/yum/pluginconf.d/proxy.conf ]; then
     source <(grep = /etc/yum/pluginconf.d/proxy.conf | tr -d " ")
     if [ -n "${blacklistfiles}" ]; then
@@ -69,6 +69,9 @@ fi
 
 
 %changelog
+* Mon Jan 18 2021 Simone Caronni <negativo17@gmail.com> - 1.1.0-4
+- Enable trigger also on Teams and Chrome packages.
+
 * Wed Jan 13 2021 Frank Tropschuh <gunther@idoru.ch> - 1.1.0-3
 - beautifying the output
 - verbose output, actually remove the repo files
